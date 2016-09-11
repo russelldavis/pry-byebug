@@ -161,4 +161,23 @@ module Byebug
       resume_pry
     end
   end
+
+  class PryPostMortemProcessor < PryProcessor
+    def self.start(context)
+      Byebug.start
+      Setting[:autolist] = false
+      Context.processor = self
+      context.at_line
+    end
+
+    def commands
+      super.select(&:allow_in_post_mortem)
+    end
+
+    def perform_next(options)
+      puts 'nope!'
+      resume_pry
+    end
+  end
+
 end
